@@ -1,0 +1,1 @@
+![Diagramme](docs/architecture.puml)
