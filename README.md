@@ -1,1 +1,1 @@
-![Diagramme](docs/architecture.puml)
+![Diagramme](docs/architecture.puml)- Test liaison Jira
