@@ -1,7 +1,0 @@
-@startuml
-title Diagramme d'Architecture Simple
-rectangle "Navigateur Web" as client
-rectangle "Serveur GitHub Pages" as server
-client -> server: Requête http
-server --> client: Renvoie index.html
-@enduml
