@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des PFE</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== PAGE DE CONNEXION ===== -->
+  <div id="login-page" class="page active">
+    <div class="login-container">
+      <div class="login-header">
+        <div class="login-icon">🎓</div>
+        <h1>Gestion des PFE</h1>
+        <p>Projets de Fin d'Études — Licence 3</p>
+      </div>
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label for="email">Adresse e-mail</label>
+          <input type="email" id="email" name="email" placeholder="exemple@univ.dz" autocomplete="username" required>
+        </div>
+        <div class="form-group password-group">
+          <label for="password">Mot de passe</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+            <button type="button" class="toggle-pwd" onclick="togglePassword()" aria-label="Afficher/masquer le mot de passe">👁</button>
+          </div>
+        </div>
+        <div id="login-error" class="error-msg" role="alert" aria-live="polite"></div>
+        <button type="submit" id="login-btn" class="btn btn-primary btn-block">
+          <span id="login-btn-text">Se connecter</span>
+          <span id="login-spinner" class="spinner hidden"></span>
+        </button>
+        <p class="forgot-link">Pas encore de compte ? <a href="#" onclick="showRegister(); return false;">S'inscrire</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== PAGE D'INSCRIPTION ===== -->
+  <div id="registerSection" class="hidden">
+    <div class="login-container">
+      <div class="login-header">
+        <div class="login-icon">🎓</div>
+        <h1>Gestion des PFE</h1>
+        <p>Créer un compte</p>
+      </div>
+      <form id="registerForm" novalidate>
+        <div class="input-row">
+          <div class="form-group input-group">
+            <label for="regPrenom">Prénom</label>
+            <input type="text" id="regPrenom" placeholder="Prénom" required>
+          </div>
+          <div class="form-group input-group">
+            <label for="regNom">Nom</label>
+            <input type="text" id="regNom" placeholder="Nom" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Adresse e-mail</label>
+          <input type="email" id="regEmail" placeholder="exemple@univ.dz" required>
+        </div>
+        <div class="form-group">
+          <label for="regRole">Rôle</label>
+          <select id="regRole" required>
+            <option value="etudiant">Étudiant</option>
+            <option value="tuteur">Tuteur</option>
+            <option value="jury">Jury</option>
+          </select>
+        </div>
+        <div class="form-group password-group">
+          <label for="regPassword">Mot de passe</label>
+          <div class="password-wrapper">
+            <input type="password" id="regPassword" placeholder="••••••••" required>
+            <button type="button" class="toggle-pwd" onclick="toggleRegPassword()" aria-label="Afficher/masquer le mot de passe">👁</button>
+          </div>
+        </div>
+        <div class="form-group password-group">
+          <label for="regConfirm">Confirmer le mot de passe</label>
+          <div class="password-wrapper">
+            <input type="password" id="regConfirm" placeholder="••••••••" required>
+            <button type="button" class="toggle-pwd" onclick="toggleConfirmPassword()" aria-label="Afficher/masquer le mot de passe">👁</button>
+          </div>
+        </div>
+        <div id="registerError" class="error-msg hidden" role="alert" aria-live="polite"></div>
+        <div id="registerSuccess" class="success-msg hidden" role="status" aria-live="polite"></div>
+        <button type="submit" id="btnRegister" class="btn btn-primary btn-block">Créer mon compte →</button>
+        <p class="forgot-link">Déjà un compte ? <a href="#" onclick="showLogin(); return false;">Se connecter</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD ===== -->
+  <div id="dashboard-page" class="page">
+
+    <!-- Barre de navigation -->
+    <nav class="navbar">
+      <div class="nav-brand">🎓 Gestion PFE</div>
+      <div class="nav-right">
+        <div class="notif-wrapper">
+          <button id="notif-btn" class="btn-icon" title="Notifications" onclick="loadNotifications()">🔔</button>
+          <span id="notif-badge" class="badge hidden">0</span>
+          <div id="notif-dropdown" class="dropdown hidden">
+            <ul id="notif-list"></ul>
+          </div>
+        </div>
+        <div class="user-info">
+          <span id="user-name"></span>
+          <span id="user-role-badge" class="role-badge"></span>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Déconnexion</button>
+      </div>
+    </nav>
+
+    <!-- Statistiques -->
+    <div class="stats-bar" id="stats-bar"></div>
+
+    <!-- Barre d'outils -->
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Rechercher un projet…" oninput="filterProjects()">
+      </div>
+      <div class="filter-group">
+        <select id="filter-statut" onchange="filterProjects()">
+          <option value="">Tous les statuts</option>
+          <option value="propose">Proposé</option>
+          <option value="valide">Validé</option>
+          <option value="en_cours">En cours</option>
+          <option value="soutenu">Soutenu</option>
+          <option value="refuse">Refusé</option>
+        </select>
+        <select id="filter-type" onchange="filterProjects()">
+          <option value="">Tous les types</option>
+          <option value="academique">Académique</option>
+          <option value="entreprise">Entreprise</option>
+        </select>
+      </div>
+      <button id="new-project-btn" class="btn btn-primary hidden" onclick="openModal()">+ Nouveau projet</button>
+    </div>
+
+    <!-- Liste des projets -->
+    <main class="projects-container">
+      <div id="projects-grid" class="projects-grid"></div>
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-icon">📂</div>
+        <p>Aucun projet trouvé.</p>
+      </div>
+      <div id="loading-state" class="loading-state">
+        <div class="loader"></div>
+        <p>Chargement des projets…</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== MODAL NOUVEAU PROJET ===== -->
+  <div id="modal-overlay" class="modal-overlay hidden" onclick="closeModalOutside(event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 id="modal-title">Nouveau projet PFE</h2>
+        <button class="modal-close" onclick="closeModal()" aria-label="Fermer">✕</button>
+      </div>
+      <form id="project-form" novalidate>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="proj-titre">Titre <span class="required">*</span></label>
+            <input type="text" id="proj-titre" placeholder="Titre du projet" required>
+          </div>
+          <div class="form-group">
+            <label for="proj-description">Description <span class="required">*</span></label>
+            <textarea id="proj-description" rows="4" placeholder="Décrivez votre projet…" required></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="proj-type">Type</label>
+              <select id="proj-type">
+                <option value="academique">Académique</option>
+                <option value="entreprise">Entreprise</option>
+              </select>
+            </div>
+            <div class="form-group" id="entreprise-group" style="display:none">
+              <label for="proj-entreprise">Nom de l'entreprise</label>
+              <input type="text" id="proj-entreprise" placeholder="Nom de l'entreprise">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="proj-technologies">Technologies (séparées par des virgules)</label>
+            <input type="text" id="proj-technologies" placeholder="ex : React, Node.js, MySQL">
+          </div>
+          <div id="project-form-error" class="error-msg" role="alert" aria-live="polite"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">
+            <span id="submit-btn-text">Soumettre</span>
+            <span id="submit-spinner" class="spinner hidden"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
